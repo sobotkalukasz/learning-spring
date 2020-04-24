@@ -27,13 +27,14 @@ public class User implements Serializable {
 	@Setter(AccessLevel.PACKAGE)
 	private Long id;
 
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	@NonNull
-	private String email;
+	private String login;
 
 	@Column(nullable = false)
 	@NonNull
-	private char[] password;
+	private String password;
+	
 
 	@OneToOne
 	private UserDetails userDetails;

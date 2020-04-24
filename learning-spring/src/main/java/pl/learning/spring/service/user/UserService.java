@@ -1,10 +1,10 @@
-package pl.learning.spring.service;
+package pl.learning.spring.service.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
-import pl.learning.spring.model.User;
-import pl.learning.spring.repository.UserRepository;
+import pl.learning.spring.repository.user.UserRepository;
 
 @Service
 public class UserService {
@@ -15,18 +15,19 @@ public class UserService {
 	public UserService(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
-
+	
 	public void addUser(User user) {
-		// TODO: server side validation
-		userRepository.save(user);
+		// TODO:
 	}
 
 	public void updateUser(User user) {
-		// TODO: server side validation
+		// TODO:
 	}
 
 	public void deleteUser(User user) {
-		userRepository.delete(user);
+		// TODO:
 	}
+
+
 
 }

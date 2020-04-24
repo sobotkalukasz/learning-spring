@@ -1,4 +1,4 @@
-package pl.learning.spring.model;
+package pl.learning.spring.model.user;
 
 import java.io.Serializable;
 

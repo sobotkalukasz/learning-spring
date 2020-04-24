@@ -8,8 +8,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import pl.learning.spring.model.AuthUserDetails;
-import pl.learning.spring.model.User;
+import pl.learning.spring.model.user.AuthUserDetails;
+import pl.learning.spring.model.user.User;
 import pl.learning.spring.repository.user.UserRepository;
 
 @Service

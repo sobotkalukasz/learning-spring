@@ -1,9 +1,9 @@
 package pl.learning.spring.model.user;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,26 +13,25 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "user_details")
+@Table(name = "user_role")
 @Data
 @NoArgsConstructor
-public class UserDetails implements Serializable {
-
-	private static final long serialVersionUID = 5038178008646923937L;
+@RequiredArgsConstructor
+public class UserRole {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_user_details")
+	@Column(name = "id_role")
 	@Setter(AccessLevel.PACKAGE)
 	private Long id;
 
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
 	@NonNull
-	private String firtsName;
-
-	@NonNull
-	private String lastName;
+	private UserRoleType roleType;
 
 }

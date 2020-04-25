@@ -10,11 +10,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import pl.learning.spring.model.user.UserRoleType;
+
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	private UserDetailsService userService;
-	
+
 	@Autowired
 	public SecurityConfiguration(UserDetailsService userService) {
 		this.userService = userService;
@@ -28,8 +30,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()//
-				.antMatchers("/amdin").hasRole("Admin")//
-				.antMatchers("/user").hasAnyRole("ADMIN", "USER")//
+				.antMatchers("/admin").hasRole(UserRoleType.ADMIN.toString())//
+				.antMatchers("/user").hasAnyRole(UserRoleType.ADMIN.toString(), UserRoleType.USER.toString())//
 				.antMatchers("/").permitAll()//
 				.and().formLogin();
 	}

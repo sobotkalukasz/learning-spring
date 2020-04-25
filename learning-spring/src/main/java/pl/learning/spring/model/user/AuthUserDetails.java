@@ -1,8 +1,8 @@
 package pl.learning.spring.model.user;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,14 +17,14 @@ public class AuthUserDetails implements UserDetails {
 
 	private String userName;
 	private String password;
-	private List<GrantedAuthority> authotities;
+	private Set<GrantedAuthority> authotities;
 
 	public AuthUserDetails(User user) {
 		this.userName = user.getLogin();
 		this.password = user.getPassword();
-
-		// TODO: hardcoded
-		this.authotities = Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
+		this.authotities = user.getRoles().stream()//
+				.map(role -> new SimpleGrantedAuthority(role.getRoleType().getValue()))//
+				.collect(Collectors.toSet());
 	}
 
 	@Override

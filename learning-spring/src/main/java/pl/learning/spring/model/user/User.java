@@ -15,6 +15,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -39,11 +40,11 @@ public class User implements Serializable {
 	private Long id;
 
 	@Column(nullable = false, unique = true)
-	@NonNull
+	@NotEmpty
 	private String login;
 
 	@Column(nullable = false)
-	@NonNull
+	@NotEmpty
 	private String password;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)

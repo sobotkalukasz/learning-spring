@@ -1,4 +1,4 @@
-package pl.learning.spring.service.user;
+package pl.learning.spring.security;
 
 import java.util.Optional;
 

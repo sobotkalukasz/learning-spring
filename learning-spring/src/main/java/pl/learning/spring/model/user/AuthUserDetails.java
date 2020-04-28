@@ -20,7 +20,7 @@ public class AuthUserDetails implements UserDetails {
 	private Set<GrantedAuthority> authotities;
 
 	public AuthUserDetails(User user) {
-		this.userName = user.getLogin();
+		this.userName = user.getEmail();
 		this.password = user.getPassword();
 		this.authotities = user.getRoles().stream()//
 				.map(role -> new SimpleGrantedAuthority(role.getRoleType().getValue()))//

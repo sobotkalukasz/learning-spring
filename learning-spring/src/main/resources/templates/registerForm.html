@@ -7,11 +7,22 @@
 <body>
 	<h1>Registration form</h1>
 	<form action="#" method="post" th:action="@{/register}"
-		th:object="${user}">
-		<p th:errors="*{login}">Email errors</p>
-		<input th:field="*{login}" placeholder="Login" /><br />
+		th:object="${userFormTO}">
+		<p th:errors="*{email}">Email errors</p>
+		<input th:field="*{email}" type="email" placeholder="Email" /><br />
+		<br />
+		<p th:errors="*{firstName}">First name errors</p>
+		<input th:field="*{firstName}" placeholder="First name" /><br />
+		<br />
+		<p th:errors="*{lastName}">Last name errors</p>
+		<input th:field="*{lastName}" placeholder="Last name" /><br />
+		<br />
 		<p th:errors="*{password}">Password errors</p>
 		<input th:field="*{password}" type="password" placeholder="Password" /><br />
+		<br />
+		<p th:errors="*{rePassword}">Password errors</p>
+		<input th:field="*{rePassword}" type="password" placeholder="Re-enter password" /><br />
+		<br />
 		<input type="submit" value="Register" />
 	</form>
 </body>

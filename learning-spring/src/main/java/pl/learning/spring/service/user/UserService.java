@@ -2,6 +2,8 @@ package pl.learning.spring.service.user;
 
 import java.util.HashSet;
 
+import javax.transaction.Transactional;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ import pl.learning.spring.repository.user.UserRepository;
 import pl.learning.spring.repository.user.UserRoleRepository;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UserService {
 

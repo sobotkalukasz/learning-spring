@@ -1,8 +1,13 @@
 package pl.learning.spring.security;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,10 +21,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import pl.learning.spring.model.user.User;
+import pl.learning.spring.repository.user.UserRepository;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @RunWith(SpringJUnit4ClassRunner.class)
 public class UserRegistrationTest {
+
+	@Autowired
+	private UserRepository userRepository;
 
 	String TOKEN_ATTR_NAME = "org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository.CSRF_TOKEN";
 
@@ -43,105 +54,175 @@ public class UserRegistrationTest {
 
 	@Test
 	public void submitRegistrationValid() throws Exception {
+		String email = "test@mail.com";
+
 		this.mockMvc.perform(//
-				prepareRegisterPostRequest("test@mail.com", "test", "test", "p@ssw0rD", "p@ssw0rD"))//
+				prepareRegisterPostRequest(email, "test", "test", "p@ssw0rD", "p@ssw0rD"))//
 				.andExpect(model().hasNoErrors())//
 				.andExpect(status().isOk());
+
+		Optional<User> user = userRepository.findByEmail(email);
+		assertTrue(user.isPresent(), "User has been registered");
 	}
 
 	@Test
 	public void submitRegistrationEmailNotValid() throws Exception {
-		this.mockMvc.perform(prepareRegisterPostRequest("notValid", "test", "test", "p@ssw0rD", "p@ssw0rD"))//
+		String email = "notValid";
+
+		this.mockMvc.perform(prepareRegisterPostRequest(email, "test", "test", "p@ssw0rD", "p@ssw0rD"))//
 				.andExpect(model().hasErrors())//
 				.andExpect(model().attributeHasFieldErrors("userFormTO", "email")).andExpect(status().isOk());
+
+		Optional<User> user = userRepository.findByEmail(email);
+		assertTrue(user.isEmpty(), "User has not been registered");
 	}
 
 	@Test
 	public void submitRegistrationEmailNotUnique() throws Exception {
+		String email = "test2@mail.com";
+
 		this.mockMvc.perform(//
-				prepareRegisterPostRequest("test2@mail.com", "test", "test", "p@ssw0rD", "p@ssw0rD"))//
+				prepareRegisterPostRequest(email, "test", "test", "p@ssw0rD", "p@ssw0rD"))//
 				.andExpect(model().hasNoErrors()).andExpect(status().isOk());
+
+		Optional<User> user = userRepository.findByEmail(email);
+		assertTrue(user.isPresent(), "User has been registered");
 
 		this.mockMvc.perform(//
 				prepareRegisterPostRequest("test2@mail.com", "test", "test", "p@ssw0rD", "p@ssw0rD"))//
 				.andExpect(model().hasErrors())//
 				.andExpect(model().attributeHasFieldErrors("userFormTO", "email")).andExpect(status().isOk());
+
+		int actualSize = userRepository.findAll().stream().filter(us -> us.getEmail().equals(email))
+				.collect(Collectors.toList()).size();
+
+		assertEquals(1, actualSize, String.format("Found more than one user with email [%s]", email));
 	}
 
 	@Test
 	public void submitRegistrationNamesToShort() throws Exception {
-		this.mockMvc.perform(prepareRegisterPostRequest("test@mail.com", "te", "te", "p@ssw0rD", "p@ssw0rD"))//
+		String email = "test@mailValid.com";
+
+		this.mockMvc.perform(prepareRegisterPostRequest(email, "te", "te", "p@ssw0rD", "p@ssw0rD"))//
 				.andExpect(model().hasErrors())//
 				.andExpect(model().attributeHasFieldErrors("userFormTO", "firstName", "lastName"))
 				.andExpect(status().isOk());
+
+		Optional<User> user = userRepository.findByEmail(email);
+		assertTrue(user.isEmpty(), "User has not been registered");
 	}
 
 	@Test
 	public void submitRegistrationNamesToLong() throws Exception {
+		String email = "test@mailValid.com";
+
 		this.mockMvc
-				.perform(prepareRegisterPostRequest("test@mail.com", "test1test1test1test1test1test1",
+				.perform(prepareRegisterPostRequest(email, "test1test1test1test1test1test1",
 						"test1test1test1test1test1test1", "p@ssw0rD", "p@ssw0rD"))//
 				.andExpect(model().hasErrors())//
 				.andExpect(model().attributeHasFieldErrors("userFormTO", "firstName", "lastName"))
 				.andExpect(status().isOk());
+
+		Optional<User> user = userRepository.findByEmail(email);
+		assertTrue(user.isEmpty(), "User has not been registered");
 	}
 
 	@Test
 	public void submitRegistrationPasswordNoUpperCase() throws Exception {
-		this.mockMvc.perform(prepareRegisterPostRequest("test@mail.com", "test", "test", "p@ssw0rd", "p@ssw0rd"))//
+		String email = "test@mailValid.com";
+
+		this.mockMvc.perform(prepareRegisterPostRequest(email, "test", "test", "p@ssw0rd", "p@ssw0rd"))//
 				.andExpect(model().hasErrors())//
 				.andExpect(model().attributeHasFieldErrors("userFormTO", "password")).andExpect(status().isOk());
+
+		Optional<User> user = userRepository.findByEmail(email);
+		assertTrue(user.isEmpty(), "User has not been registered");
 	}
 
 	@Test
 	public void submitRegistrationPasswordNoLowerCase() throws Exception {
-		this.mockMvc.perform(prepareRegisterPostRequest("test@mail.com", "test", "test", "P@SSW0RD", "P@SSW0RD"))//
+		String email = "test@mailValid.com";
+
+		this.mockMvc.perform(prepareRegisterPostRequest(email, "test", "test", "P@SSW0RD", "P@SSW0RD"))//
 				.andExpect(model().hasErrors())//
 				.andExpect(model().attributeHasFieldErrors("userFormTO", "password")).andExpect(status().isOk());
+
+		Optional<User> user = userRepository.findByEmail(email);
+		assertTrue(user.isEmpty(), "User has not been registered");
 	}
 
 	@Test
 	public void submitRegistrationPasswordNoDigit() throws Exception {
-		this.mockMvc.perform(prepareRegisterPostRequest("test@mail.com", "test", "test", "p@ssworD", "p@ssworD"))//
+		String email = "test@mailValid.com";
+
+		this.mockMvc.perform(prepareRegisterPostRequest(email, "test", "test", "p@ssworD", "p@ssworD"))//
 				.andExpect(model().hasErrors())//
 				.andExpect(model().attributeHasFieldErrors("userFormTO", "password")).andExpect(status().isOk());
+
+		Optional<User> user = userRepository.findByEmail(email);
+		assertTrue(user.isEmpty(), "User has not been registered");
 	}
 
 	@Test
 	public void submitRegistrationPasswordNoSpecialChar() throws Exception {
-		this.mockMvc.perform(prepareRegisterPostRequest("test@mail.com", "test", "test", "possw0rD", "passw0rD"))//
+		String email = "test@mailValid.com";
+
+		this.mockMvc.perform(prepareRegisterPostRequest(email, "test", "test", "possw0rD", "passw0rD"))//
 				.andExpect(model().hasErrors())//
 				.andExpect(model().attributeHasFieldErrors("userFormTO", "password")).andExpect(status().isOk());
+
+		Optional<User> user = userRepository.findByEmail(email);
+		assertTrue(user.isEmpty(), "User has not been registered");
 	}
 
 	@Test
 	public void submitRegistrationPasswordWhiteSpace() throws Exception {
-		this.mockMvc.perform(prepareRegisterPostRequest("test@mail.com", "test", "test", "possw0 rD", "passw0 rD"))//
+		String email = "test@mailValid.com";
+
+		this.mockMvc.perform(prepareRegisterPostRequest(email, "test", "test", "possw0 rD", "passw0 rD"))//
 				.andExpect(model().hasErrors())//
 				.andExpect(model().attributeHasFieldErrors("userFormTO", "password")).andExpect(status().isOk());
+
+		Optional<User> user = userRepository.findByEmail(email);
+		assertTrue(user.isEmpty(), "User has not been registered");
 	}
 
 	@Test
 	public void submitRegistrationPasswordToShort() throws Exception {
-		this.mockMvc.perform(prepareRegisterPostRequest("test@mail.com", "test", "test", "p@w0rD", "p@w0rD"))//
+		String email = "test@mailValid.com";
+
+		this.mockMvc.perform(prepareRegisterPostRequest(email, "test", "test", "p@w0rD", "p@w0rD"))//
 				.andExpect(model().hasErrors())//
 				.andExpect(model().attributeHasFieldErrors("userFormTO", "password")).andExpect(status().isOk());
+
+		Optional<User> user = userRepository.findByEmail(email);
+		assertTrue(user.isEmpty(), "User has not been registered");
 	}
 
 	@Test
 	public void submitRegistrationPasswordToLong() throws Exception {
+		String email = "test@mailValid.com";
+
 		this.mockMvc
-				.perform(prepareRegisterPostRequest("test@mail.com", "test", "test",
-						"p@ssw0rDp@ssw0rDp@ssw0rDp@ssw0rDp@ssw0rD", "p@ssw0rDp@ssw0rDp@ssw0rDp@ssw0rDp@ssw0rD"))//
+				.perform(prepareRegisterPostRequest(email, "test", "test", "p@ssw0rDp@ssw0rDp@ssw0rDp@ssw0rDp@ssw0rD",
+						"p@ssw0rDp@ssw0rDp@ssw0rDp@ssw0rDp@ssw0rD"))//
 				.andExpect(model().hasErrors())//
 				.andExpect(model().attributeHasFieldErrors("userFormTO", "password")).andExpect(status().isOk());
+
+		Optional<User> user = userRepository.findByEmail(email);
+		assertTrue(user.isEmpty(), "User has not been registered");
 	}
 
 	@Test
 	public void submitRegistrationPasswordNotMatching() throws Exception {
-		this.mockMvc.perform(prepareRegisterPostRequest("test@mail.com", "test", "test", "p@ssw0rD", "wrong"))//
+		String email = "test@mailValid.com";
+
+		this.mockMvc.perform(prepareRegisterPostRequest(email, "test", "test", "p@ssw0rD", "wrong"))//
 				.andExpect(model().hasErrors())//
 				.andExpect(model().attributeHasFieldErrors("userFormTO", "rePassword")).andExpect(status().isOk());
+
+		Optional<User> user = userRepository.findByEmail(email);
+		assertTrue(user.isEmpty(), "User has not been registered");
 	}
 
 }

@@ -1,15 +1,20 @@
 package pl.learning.spring.model.user.dto;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import pl.learning.spring.model.user.validator.FieldMatch;
 import pl.learning.spring.model.user.validator.UniqueEmail;
 import pl.learning.spring.model.user.validator.ValidPassword;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @FieldMatch(first = "rePassword", second = "password", message = "The passwords must match")
 public class UserFormTO {
 
@@ -17,11 +22,9 @@ public class UserFormTO {
 	@UniqueEmail
 	private String email;
 
-	@NotEmpty
 	@ValidPassword
 	private String password;
 
-	@NotEmpty
 	private String rePassword;
 
 	@Size(min = 3, max = 25)

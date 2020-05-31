@@ -2,6 +2,7 @@ package pl.learning.spring.model.user.validator;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.validation.ConstraintValidator;
@@ -20,6 +21,7 @@ public class ValidPasswordValidator implements ConstraintValidator<ValidPassword
 
 	@Override
 	public boolean isValid(String password, ConstraintValidatorContext context) {
+		if(Objects.isNull(password)) return false;
 		PasswordValidator validator = new PasswordValidator(Arrays.asList(new LengthRule(8, 30),
 				new CharacterRule(PolishCharacterData.UpperCase, 1),
 				new CharacterRule(PolishCharacterData.LowerCase, 1), new CharacterRule(EnglishCharacterData.Digit, 1),

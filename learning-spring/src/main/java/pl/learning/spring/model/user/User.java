@@ -21,14 +21,12 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "user")
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class User implements Serializable {
 
 	private static final long serialVersionUID = 4601817227589422072L;

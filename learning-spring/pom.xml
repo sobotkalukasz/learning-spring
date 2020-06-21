@@ -14,10 +14,10 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>learning-spring</name>
-	<description>Learnign Spring Framework</description>
+	<description>Learning Spring Framework</description>
 
 	<properties>
-		<java.version>13</java.version>
+		<java.version>14</java.version>
 	</properties>
 
 	<dependencies>
@@ -59,7 +59,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
-			<scope>provided</scope>
+			<!--<scope>provided</scope>-->
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
